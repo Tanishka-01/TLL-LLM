@@ -1,0 +1,13 @@
+# config for whole system
+# doesn't work at the moment
+
+
+llm=
+# vosk model
+tts-model=
+
+# go to https://alphacephei.com/vosk/models for vosk models 
+VOSK_MODEL_PATH = "stt/vosk-model-small-en-us-0.15"
+SAMPLE_RATE = 16000
+CHUNK_DURATION_SEC = 20
+

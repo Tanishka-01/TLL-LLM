@@ -6,7 +6,7 @@ import json
 from vosk import Model, KaldiRecognizer, SetLogLevel
 
 # ------ config ----------
-VOSK_MODEL_PATH = "vosk-model-small-en-us-0.15" # Set your Vosk model path here
+VOSK_MODEL_PATH = "stt/vosk-model-en-us-0.42-gigaspeech" # Set your Vosk model path here
 SAMPLE_RATE = 16000
 CHUNK_DURATION_SEC = 20
 # ------------------------
