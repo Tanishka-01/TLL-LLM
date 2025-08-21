@@ -1,0 +1,9 @@
+whisper
+
+kokoro 
+sounddevice 
+pyaudio
+numpy
+
+
+soundfile
