@@ -9,14 +9,7 @@ python3 -m venv python-env
 source python-env/bin/activate
 
 # install script dependencies
-pip install vosk
-pip install numpy
-
-# find vosk model https://alphacephei.com/vosk/models
-# default: vosk-model-small-en-us-0.15
-wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
-unzip vosk-model-small-en-us-0.15.zip
-rm vosk-model-small-en-us-0.15.zip
+pip install -r requirements.txt
 
 # setup model to build
 ollama create convo-ai -f Modelfile

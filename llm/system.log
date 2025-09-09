@@ -1,0 +1,268 @@
+[2025-09-08 15:51:04.778] Script started
+
+[2025-09-08 15:51:04.779] Starting LLM processing
+
+[2025-09-08 15:51:25.677] LLM processing completed
+
+[2025-09-08 15:51:25.677] Script execution completed
+------------------------------------
+
+
+[2025-09-08 16:04:39.332] Script started
+
+[2025-09-08 16:04:39.332] Starting LLM processing
+
+[2025-09-08 16:04:51.605] LLM processing completed
+
+[2025-09-08 16:04:51.605] Script execution completed
+------------------------------------
+
+
+[2025-09-08 16:05:35.441] Script started
+
+[2025-09-08 16:05:35.442] Starting LLM processing
+
+[2025-09-08 16:05:37.459] LLM processing completed
+
+[2025-09-08 16:05:37.459] Script execution completed
+------------------------------------
+
+
+[2025-09-08 16:09:06.434] Script started
+
+[2025-09-08 16:09:06.434] Starting LLM processing
+
+[2025-09-08 16:09:08.302] LLM processing completed
+
+[2025-09-08 16:09:08.302] Script execution completed
+------------------------------------
+
+
+[2025-09-08 16:09:20.456] Script started
+
+[2025-09-08 16:09:20.457] Starting LLM processing
+
+[2025-09-08 16:09:28.814] LLM processing completed
+
+[2025-09-08 16:09:28.814] Script execution completed
+------------------------------------
+
+
+[2025-09-08 16:17:13.513] Script started
+
+[2025-09-08 16:17:13.514] Starting TTS processing
+
+[2025-09-08 16:18:43.760] Script started
+
+[2025-09-08 16:18:43.760] Starting TTS processing
+
+[2025-09-08 16:29:45.780] Script started
+
+[2025-09-08 16:29:45.780] Starting TTS processing
+
+[2025-09-08 16:29:45.814] TTS processing failed:
+
+STDOUT: 
+STDERR: No text provided for TTS
+
+
+[2025-09-08 16:52:13.389] Script started
+
+[2025-09-08 16:52:13.389] Starting TTS processing
+
+[2025-09-08 16:52:21.204] TTS processing failed:
+
+STDOUT: 
+STDERR: [W908 16:52:19.129212206 NNPACK.cpp:56] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W908 16:52:19.130691895 NNPACK.cpp:56] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W908 16:52:19.132030359 NNPACK.cpp:56] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W908 16:52:19.135592848 NNPACK.cpp:56] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W908 16:52:19.135738191 NNPACK.cpp:56] Could not initialize NNPACK! Reason: Unsupported hardware.
+Error during TTS generation: No format specified and unable to get format from file extension: '&config.output'
+Traceback (most recent call last):
+  File "/mnt/virt-share/llm/voice", line 126, in run_tts
+    sf.write(output_file, combined_audio, 24000)
+  File "/mnt/virt-share/llm/python-env/lib/python3.12/site-packages/soundfile.py", line 363, in write
+    with SoundFile(file, 'w', samplerate, channels,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/virt-share/llm/python-env/lib/python3.12/site-packages/soundfile.py", line 688, in __init__
+    self._info = _create_info_struct(file, mode, samplerate, channels,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/virt-share/llm/python-env/lib/python3.12/site-packages/soundfile.py", line 1539, in _create_info_struct
+    format = _get_format_from_filename(file, mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/virt-share/llm/python-env/lib/python3.12/site-packages/soundfile.py", line 1580, in _get_format_from_filename
+    raise TypeError("No format specified and unable to get format from "
+TypeError: No format specified and unable to get format from file extension: '&config.output'
+Traceback (most recent call last):
+  File "/mnt/virt-share/llm/voice", line 126, in run_tts
+    sf.write(output_file, combined_audio, 24000)
+  File "/mnt/virt-share/llm/python-env/lib/python3.12/site-packages/soundfile.py", line 363, in write
+    with SoundFile(file, 'w', samplerate, channels,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/virt-share/llm/python-env/lib/python3.12/site-packages/soundfile.py", line 688, in __init__
+    self._info = _create_info_struct(file, mode, samplerate, channels,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/virt-share/llm/python-env/lib/python3.12/site-packages/soundfile.py", line 1539, in _create_info_struct
+    format = _get_format_from_filename(file, mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/virt-share/llm/python-env/lib/python3.12/site-packages/soundfile.py", line 1580, in _get_format_from_filename
+    raise TypeError("No format specified and unable to get format from "
+TypeError: No format specified and unable to get format from file extension: '&config.output'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/mnt/virt-share/llm/voice", line 269, in <module>
+    run_tts(text, voice=args.voice, speed=args.speed, output_file=args.output_file)
+  File "/mnt/virt-share/llm/voice", line 141, in run_tts
+    raise RuntimeError("Failed to generate speech.") from e
+RuntimeError: Failed to generate speech.
+
+
+[2025-09-08 16:53:14.733] Script started
+
+[2025-09-08 16:53:14.733] Starting TTS processing
+
+[2025-09-08 16:53:22.226] TTS processing completed
+
+[2025-09-08 16:53:22.226] Script execution completed
+------------------------------------
+
+
+[2025-09-08 17:09:46.463] Script started
+
+[2025-09-08 17:09:46.463] Starting LLM processing
+
+[2025-09-08 17:09:56.595] LLM processing completed
+
+[2025-09-08 17:09:56.595] Script execution completed
+------------------------------------
+
+
+[2025-09-08 17:34:43.040] Script started
+
+[2025-09-08 17:34:43.042] Starting STT processing
+
+[2025-09-08 17:34:43.216] STT processing failed:
+
+STDOUT: 
+STDERR: usage: voice stt [-h] -m {tiny,base,small,medium,large}
+                 [-l {en,es,nl,ko,it,de,th,ru,pt,pl,id,zh,sv,cs,ja,fr,ro,tr,ca,hu,uk,el,bg,ar,sr,mk,lv,sl,hi,gl,da,ur,sk,he,fi,az,lt,et,nn,cy,pa,af,fa,eu,vi,bn,ne,mr,be,kk,hy,sw,ta,sq}]
+                 input_file
+voice stt: error: the following arguments are required: input_file
+
+
+[2025-09-08 17:34:56.576] Script started
+
+[2025-09-08 17:34:56.579] Starting STT processing
+
+[2025-09-08 17:34:56.735] STT processing failed:
+
+STDOUT: 
+STDERR: usage: voice [-h] {tts,stt,download} ...
+voice: error: unrecognized arguments: --input
+
+
+[2025-09-08 17:36:48.677] Script started
+
+[2025-09-08 17:36:48.678] Starting STT processing
+
+[2025-09-08 17:36:54.467] STT processing completed
+
+[2025-09-08 17:36:54.467] Script execution completed
+------------------------------------
+
+
+[2025-09-08 18:32:09.168] Script started
+
+[2025-09-08 18:32:09.169] Starting STT processing
+
+[2025-09-08 18:32:14.771] STT processing completed
+
+[2025-09-08 18:32:14.771] Script execution completed
+------------------------------------
+
+
+[2025-09-08 18:32:25.337] Script started
+
+[2025-09-08 18:32:25.338] Starting STT processing
+
+[2025-09-08 18:32:29.590] STT processing completed
+
+[2025-09-08 18:32:29.590] Script execution completed
+------------------------------------
+
+
+[2025-09-08 18:33:12.825] Script started
+
+[2025-09-08 18:33:12.826] Running full pipeline
+
+[2025-09-08 18:33:12.827] Starting STT processing
+
+[2025-09-08 18:34:29.440] Script started
+
+[2025-09-08 18:34:29.443] Running full pipeline
+
+[2025-09-08 18:34:29.443] Starting STT processing
+
+[2025-09-08 18:35:35.906] Script started
+
+[2025-09-08 18:35:35.906] Running full pipeline
+
+[2025-09-08 18:35:35.907] Starting STT processing
+
+[2025-09-08 18:35:42.144] STT processing completed
+
+[2025-09-08 18:35:42.144] Starting LLM processing
+
+[2025-09-08 18:36:25.701] LLM processing completed
+
+[2025-09-08 18:36:25.702] Starting TTS processing
+
+[2025-09-08 18:36:49.625] TTS processing completed
+
+[2025-09-08 18:36:49.625] Script execution completed
+------------------------------------
+
+
+[2025-09-08 18:43:49.610] Script started
+
+[2025-09-08 18:43:49.611] Running full pipeline
+
+[2025-09-08 18:43:49.611] Starting STT processing
+
+[2025-09-08 18:43:55.805] STT processing completed
+
+[2025-09-08 18:43:55.805] Starting LLM processing
+
+[2025-09-08 18:44:40.242] LLM processing completed
+
+[2025-09-08 18:44:40.242] Starting TTS processing
+
+[2025-09-08 18:45:03.180] TTS processing completed
+
+[2025-09-08 18:45:03.181] Script execution completed
+------------------------------------
+
+
+[2025-09-08 18:46:02.825] Script started
+
+[2025-09-08 18:46:02.825] Running full pipeline
+
+[2025-09-08 18:46:02.826] Starting STT processing
+
+[2025-09-08 18:46:08.681] STT processing completed
+
+[2025-09-08 18:46:08.681] Starting LLM processing
+
+[2025-09-08 18:46:41.318] LLM processing completed
+
+[2025-09-08 18:46:41.318] Starting TTS processing
+
+[2025-09-08 18:47:06.947] TTS processing completed
+
+[2025-09-08 18:47:06.948] Script execution completed
+------------------------------------
+
+
