@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+
+"""
+IMPORTANT: this program requires that you install the selenium package,
+firefox, and the firefox drivers gecko to work
+"""
+
+#import requests 
+#import asyncio
+#from websockets.sync.client import connect
+import websockets
+import ssl
+
+from selenium import webdriver
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+import sys
+#import logging
+
+#logging.basicConfig(level=logging.INFO)
+
+
+#r = requests.get('', auth=('user', 'pass'))
+
+
+
+class JitsiBot:
+    def __init__(self, room_url, id, password, audio_device, browser='firefox'):
+        """
+        Initialize the Jitsi bot.
+        
+        :param room_url: The full URL of the Jitsi meeting room
+        :param id: Bot ID for server to know whos joinning
+        :param password: Password for bot ID 
+        :param browser: Browser to use ('chrome' or 'firefox')
+        """
+        self.room_url = room_url
+        self.id = id
+        self.password = password
+        self.driver = None
+        self.browser = browser
+        self.audio_device = audio_device
+
+
+    def start(self):
+        """Start the bot and connect to the Jitsi room."""
+        try:
+            uri = "wss://jitsi.local/xmpp-websocket?room=stunningmemosadvanceyet"
+            headers = {
+                "Connection": "Upgrade",
+                "Upgrade": "websocket",
+                #"Sec-WebSocket-Key": "uYYFPQdk/6Kzh1burnyc4A==",
+                "Sec-WebSocket-Version": "13",
+                "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
+                "Sec-WebSocket-Protocol": "xmpp",
+                #"Sec-WebSocket-Accept": "lTIiZp270J52896fJsjuz0LIhTQ="
+                #
+                #"Sec-Fetch-Dest": "empty",
+                #"Sec-Fetch-Mode": "websocket",
+                #"Sec-Fetch-Site": "same-origin",
+                #"Pragma": "no-cache",
+                #"Cache-Control": "no-cache",
+            }
+
+            #ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            ssl_context = ssl.create_default_context()
+            ssl_context.check_hostname = False
+            ssl_context.verify_mode = ssl.CERT_NONE
+
+            #with connect(uri, additional_headers=headers, ssl=ssl_context) as websocket:
+                #websocket.send(f"<open to=\"jitsi.local\" version=\"1.0\" xmlns=\"urn:ietf:params:xml:ns:xmpp-framing\"/>")
+            #    websocket.send('<open xmlns="urn:ietf:params:xml:ns:xmpp-framing" to="jitsi.local" version="1.0"/>')
+            #    message = websocket.recv()
+            #    print(f"Received: {message}")
+
+            websocket_conn = None
+
+            try:
+                websocket_conn = websocket.create_connection(uri, header=headers, sslopt={"ssl_context": ssl_context})
+                websocket_conn.send('<open xmlns="urn:ietf:params:xml:ns:xmpp-framing" to="jitsi.local" version="1.0"/>')
+                message = websocket_conn.recv()
+                print(f"Received: {message}")
+
+            except Exception as e:
+                print(f"Error: {e}")
+
+            finally:
+                if websocket_conn:
+                    websocket_conn.close()
+
+
+            # Navigate to the room
+            #print(f"Connecting to {self.room_url}")
+            #self.driver.get(self.room_url)
+            
+            #time.sleep(3) # Wait for page to load and join the meeting
+
+            # Enter display name
+            #self.driver.find_element(By.ID, "premeeting-name-input").send_keys(self.id)
+            #print(f"Entered name: {self.id}")
+
+            # Enter password (if required)
+            #password_input = self.driver.find_element(By.ID, "")
+            #password_input.send_keys(self.password)
+            #print(f"Entered password: {self.password}")
+
+            # Click Join
+            #self.driver.find_element(By.XPATH, "//div[@data-testid='prejoin.joinMeeting']").click()
+            #print("Joinned room via button")
+
+            #time.sleep(3)  # Wait for the room to load
+            
+        except Exception as e:
+            print(f"Error starting bot: {e}")
+            #self.stop()
+    
+
+    # prob wont need to mute/unmute the bot
+    def toggle_audio(self):
+        try:
+            mute_button = self.driver.find_element(By.CLASS_NAME, "audio-preview")
+            if mute_button:
+                mute_button.click()
+                print("Audio toggled")
+        except Exception as e:
+            print(f"Error muting audio: {e}")
+    
+
+    # I have it here but I don't think I'll get any use out of it
+    def toggle_video(self):
+        try:
+            video_button = self.driver.find_element(By.CLASS_NAME, "video-preview") 
+            if video_button:
+                video_button.click()
+                print("Video toggled")
+        except Exception as e:
+            print(f"Error toggling video: {e}")
+
+
+    def send_message(self, message):
+        try:
+            self.driver.find_element(By.XPATH, "/html/body/div/div/div/div/div[3]/div/div/div/div[4]").click() # click icon
+            chat_input = self.driver.find_element(By.ID, "chat-input-messagebox") # select prompt
+            if chat_input:
+                chat_input.send_keys(message)
+                chat_input.send_keys(Keys.RETURN)
+                time.sleep(1)
+                self.driver.find_element(By.XPATH, "/html/body/div/div/div/div/div[3]/div/div/div/div[4]").click() # click icon again to close
+                print(f"Message sent: {message}")
+        except Exception as e:
+            print(f"Error sending message: {e}")
+    
+
+    # TODO fix asap
+    def get_participants(self):
+        try:
+            participants_list = self.driver.find_element(By.XPATH, "//div[contains(@class, 'participants')]") 
+            print("Participants:")
+        except Exception as e:
+            print(f"Error getting participants: {e}")
+    
+
+    def stop(self):
+        """Stop the bot and close the browser."""
+        if self.driver:
+            self.driver.quit()
+            print("Bot stopped")
+
+
+if __name__ == "__main__":
+    # Bot config
+    XMPP_DOMAIN = "jitsi.local"
+    #ROOM_URL = f"https://{XMPP_DOMAIN}/testroom"
+    ROOM_URL = f"https://{XMPP_DOMAIN}/StunningMemosAdvanceYet"
+    #ID = f"bot@{XMPP_DOMAIN}"
+    ID = f"bot"
+    PASSWORD = "botpassword"
+    VITRUAL_AUDIO_DEVICE = "BotSink"
+    
+    # Create bot instance
+    bot = JitsiBot(ROOM_URL, ID, PASSWORD, VITRUAL_AUDIO_DEVICE, browser='firefox')
+    
+    try:
+        bot.start()
+        #bot.send_message("Hello from Jitsi Bot!")
+        #time.sleep(1000000)
+        
+    except KeyboardInterrupt:
+        bot.stop()
+        print("Interrupted by user")
+    finally:
+        bot.stop()

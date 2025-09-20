@@ -53,6 +53,7 @@ pub struct Config {
     pub llm_model: String,
     pub tts_model: String,
     pub output: String,
+    pub audio_file: String,
 }
 impl Config {
     fn load(path: Option<String>) -> Result<Self, Box<dyn std::error::Error>> {
@@ -69,6 +70,7 @@ impl Config {
         let mut python_env = String::new();
         let mut log_file = "pipeline.log".to_string();
         let mut enable_logging = true;
+        let mut audio_file = String::new();
 
         // this is bad code however I'm not certain theres a better way without importing a parser of some type
         for line in config_content.lines() {
@@ -88,6 +90,8 @@ impl Config {
                 log_file = line[9..].trim_matches('"').to_string();
             } else if line.starts_with("ENABLE_LOGGING=") {
                 enable_logging = line[15..].trim_matches('"').parse().expect("Some bool if logging");
+            } else if line.starts_with("AUDIO_FILE=") {
+                audio_file = line[11..].trim_matches('"').to_string();
             }
         }
 
@@ -100,6 +104,7 @@ impl Config {
             python_env,
             log_file,
             enable_logging,
+            audio_file,
         })
     }
 }
@@ -126,14 +131,13 @@ fn log(message: &str) {
 }
 
 
-
 fn run_stt(input: Option<&str>) -> Result<String, Box<dyn std::error::Error>> {
     use std::path::Path;
     
     log("Starting STT processing");
     let config = get_config();
 
-    let mut cmd = Command::new("python-env/bin/python");
+    let mut cmd = Command::new(&config.python_env);
     cmd.args(["voice", "stt", "-m", &config.stt_model, "-l", &config.stt_lang]);
 
     if let Some(input_path) = input {
@@ -145,7 +149,7 @@ fn run_stt(input: Option<&str>) -> Result<String, Box<dyn std::error::Error>> {
         }
 
         cmd.arg(input_path);
-    }
+    } //else if let None(input_path) = in //TODO
 
     let output = cmd.output()
         .expect("Failed to run Python script, make sure your in the correct working directory!!!");
@@ -199,7 +203,7 @@ fn run_tts(input: &str) -> Result<String, Box<dyn std::error::Error>> {
     let config = get_config();
     
     // this runs the subprocess 'voice' using the correct env
-    let output = Command::new("python-env/bin/python")
+    let output = Command::new(&config.python_env)
         .args(["voice", "tts", input, "-v", &config.tts_model, "-o", &config.output])
         .output()?;
     
@@ -218,11 +222,14 @@ fn run_tts(input: &str) -> Result<String, Box<dyn std::error::Error>> {
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // This is here so every crash is seprated by a log at the end in the log file
     let original_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |panic_info| {
+        println!("THERE IS AN ERROR!!!!!");
         log("Script panicked and crashed\n------------------------------------\n");
         original_hook(panic_info);
     }));
+
 
     let args = Args::parse();
 
@@ -234,23 +241,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     CONFIG.set(Arc::new(config)).map_err(|_| "Config already initialized")?;
     
     log("Script started");
-    // need to fix in future so that output from one goes into another
     if let Some(command) = &args.command {
         let _balls = match command {
-            Commands::Stt { input} => {
-                //let input = false;
+            Commands::Stt { input } => {
                 let output = run_stt(input.as_deref())?;
-                println!("STT output: {output}");
                 output
             },
-            Commands::Llm { input} => {
+            Commands::Llm { input } => {
                 let output = run_llm(input)?;
-                //println!("LLM output: {output}");
                 output
             },
             Commands::Tts { input } => {
                 let output = run_tts(input)?;
-                //println!("TTS output: {output}");
                 output
             },
             /*
@@ -265,11 +267,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             */
         };
-        //println!("{balls}");
     } else {
         // Default full pipeline
         log("Running full pipeline");
-        let input = Some("llm-output.wav");
+        let audio_file = &get_config().audio_file;
+        if !std::path::Path::new(audio_file).exists() {
+            return Err(format!("Audio file does not exist: {}", audio_file).into());
+        }
+        let input = Some(audio_file.as_str());
 
         let stt_output = run_stt(input)?;
         let llm_output = run_llm(&stt_output)?;

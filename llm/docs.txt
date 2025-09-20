@@ -9,7 +9,7 @@ curl -fsSL https://ollama.com/install.sh | sh
 ollama list
 ```
 
-# install smallest deepseek model
+# install model or run script to install one from hugging face
 ```bash
 ollama pull deepseek-r1:1.5b
 ```
@@ -18,31 +18,10 @@ ollama pull deepseek-r1:1.5b
 ```bash
 ollama run deepseek-r1:1.5b
 ```
------------------------------------
 
-// might use
-# Step 1: Extract audio from video
-ffmpeg -i input.mp4 -vn -acodec pcm_s16le -ar 16000 -ac 1 audio.wav
-
-
-# get STT (speach to text) -- options we have
--openai-whisper: pip install openai-whisper ((Open Source) is most accurate, with great punctuation and formatting)
--Vosk: pip3 install vosk (speed, lightweight deployment, and offline use)
--Coqui STT: https://stt.readthedocs.io/en/latest/
-
-
-what I'm thinking to talk to model:
-```
-ollama run deepseek < ./audio.mp3 | audio_tokenizer_to_file
-```
-
-^
+#TODO
 source sep to get context from person then pass to tokenizer
 every 20s get transcript: id, timestamp, and text from id
 
 
 the deepseek model is too slow and adds to much talk, so we need to make a modelfile to make the conv shorter and give context to the data coming in.
-I already made a modelfile, run this command
-``` bash
-ollama create convo-ai -f Modelfile
-```

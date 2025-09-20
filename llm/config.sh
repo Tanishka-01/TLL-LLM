@@ -1,6 +1,6 @@
 ### config for real time LLM communication pipeline 
 # Python Environment
-PYTHON_ENV="./python-env/bin/activate"
+PYTHON_ENV="./python-env/bin/python3"
 
 # LLM Settings
 LLM_MODEL="capybarahermes-2.5-mistral-7b.Q4_0:latest"
