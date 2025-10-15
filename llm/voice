@@ -226,30 +226,41 @@ if __name__ == "__main__":
     stt_parser = subparsers.add_parser('stt', help='Convert speech to text')
     stt_parser.add_argument('-m', '--model', required=True, choices=list(STT_MODELS.keys()), help='Speech recognition model')
     stt_parser.add_argument('-l', '--language', default='en', choices=list(SPEACH_RECOGNITION_LANGUAGES.keys()), help='Language for speech recognition (default: en)')
-    stt_parser.add_argument('input_file', help='Input audio file path')
+    stt_parser.add_argument('file', help='Input audio file path')
 
     # Download Parser
     download_parser = subparsers.add_parser('download', help='Download a speech recognition model')
     download_parser.add_argument('-m', '--model', required=True, choices=list(STT_MODELS.keys()), help='Model to download')
 
+
+
     # Check if no arguments provided or help message to avoid unnessasary compute
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
-    # TODO need to make is help message displays subargs/flags
 
     args = parser.parse_args()
 
+
     if args.command == 'tts':
-        if args.text:
+        text = ""
+
+        # if input file is given
+        if args.input_file: #wtf is this erroring out
+            try:
+                with open(args.input_file, 'r') as f:
+                    text = f.read().strip()
+            except Exception as e:
+                print(f"Error reading input file: {e}", file=sys.stderr)
+                sys.exit(1)
+
+        # If user passed inline text (might be removed as it seems unnessasry)
+        elif args.text:
             text = ' '.join(args.text)
+
+        # else read from stdin
         else:
             try:
-                # Try to read from stdin, but don't hang indefinitely
-                # Read all input or timeout after a short time
-                import select
-                import sys
-                
                 if not sys.stdin.isatty():  # If not interactive terminal
                     text = sys.stdin.read().strip()
                 else:
@@ -257,25 +268,27 @@ if __name__ == "__main__":
                     print("No text provided for TTS", file=sys.stderr)
                     sys.exit(1)
             except Exception:
-                if not sys.stdin.isatty():
-                    text = sys.stdin.read().strip()
-                else:
-                    print("No text provided for TTS", file=sys.stderr)
-                    sys.exit(1)
+                print(f"Error reading from stdin: {e}", file=sys.stderr)
+                sys.exit(1)
         if not text:
             print("No text provided for TTS", file=sys.stderr)
             sys.exit(1)
         
         run_tts(text, voice=args.voice, speed=args.speed, output_file=args.output_file)
 
+
+
     elif args.command == 'stt':
         try:
-            result = run_stt(args.model, args.language, args.input_file)
+            result = run_stt(args.model, args.language, args.file)
             print(result)
         except Exception as e:
             print(f"Error during STT processing: {e}")
             sys.exit(1)
 
+
+
+    # this option should probably be removed or changed in the future 
     elif args.command == 'download':
         try:
             download_model(args.model)

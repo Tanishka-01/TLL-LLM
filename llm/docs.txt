@@ -1,7 +1,6 @@
-
-# setup ollama to get llm
+# Run the setup script to install dependencies and environment
 ```bash
-curl -fsSL https://ollama.com/install.sh | sh
+./setup.sh
 ```
 
 # after install check if working
@@ -10,18 +9,23 @@ ollama list
 ```
 
 # install model or run script to install one from hugging face
+## either this:
 ```bash
 ollama pull deepseek-r1:1.5b
 ```
-
-# then test it by running it
+## or this:
 ```bash
-ollama run deepseek-r1:1.5b
+./create-ollama-model [url]
 ```
+# check its from huggingface and contains a gguf file extention
+# example page: https://huggingface.co/TheBloke/CapybaraHermes-2.5-Mistral-7B-GGUF
+
+# exmaple command:
+# ./create-ollama-model https://huggingface.co/TheBloke/CapybaraHermes-2.5-Mistral-7B-GGUF/resolve/main/capybarahermes-2.5-mistral-7b.Q4_0.gguf?download=true
+
+
+
 
 #TODO
 source sep to get context from person then pass to tokenizer
 every 20s get transcript: id, timestamp, and text from id
-
-
-the deepseek model is too slow and adds to much talk, so we need to make a modelfile to make the conv shorter and give context to the data coming in.

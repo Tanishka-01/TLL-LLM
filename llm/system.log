@@ -1,52 +1,40 @@
-[2025-09-19 20:33:14.703] Script started
+[2025-10-14 03:49:53.002] Script started
 
-[2025-09-19 20:33:14.703] Starting STT processing
+[2025-10-14 03:49:53.003] Running full pipeline
 
-[2025-09-19 20:33:14.740] STT processing failed:
+[2025-10-14 03:49:53.003] Starting STT processing
 
-STDOUT: 
-STDERR: usage: voice stt [-h] -m {tiny,base,small,medium,large}
-                 [-l {en,es,nl,ko,it,de,th,ru,pt,pl,id,zh,sv,cs,ja,fr,ro,tr,ca,hu,uk,el,bg,ar,sr,mk,lv,sl,hi,gl,da,ur,sk,he,fi,az,lt,et,nn,cy,pa,af,fa,eu,vi,bn,ne,mr,be,kk,hy,sw,ta,sq}]
-                 input_file
-voice stt: error: the following arguments are required: input_file
+[2025-10-14 03:49:58.820] STT processing completed
 
+[2025-10-14 03:49:58.821] Starting LLM processing
 
-[2025-09-19 20:40:17.677] Script started
+[2025-10-14 03:50:56.784] LLM processing completed
 
-[2025-09-19 20:40:17.677] Starting STT processing
+[2025-10-14 03:50:56.785] Starting TTS processing
 
-[2025-09-19 20:40:17.712] STT processing failed:
+[2025-10-14 03:51:30.844] TTS processing completed
 
-STDOUT: 
-STDERR: usage: voice stt [-h] -m {tiny,base,small,medium,large}
-                 [-l {en,es,nl,ko,it,de,th,ru,pt,pl,id,zh,sv,cs,ja,fr,ro,tr,ca,hu,uk,el,bg,ar,sr,mk,lv,sl,hi,gl,da,ur,sk,he,fi,az,lt,et,nn,cy,pa,af,fa,eu,vi,bn,ne,mr,be,kk,hy,sw,ta,sq}]
-                 input_file
-voice stt: error: the following arguments are required: input_file
+[2025-10-14 03:51:30.844] Script execution completed
+------------------------------------
 
 
-[2025-09-19 20:47:07.165] Script started
+[2025-10-14 03:56:42.910] Script started
 
-[2025-09-19 20:47:07.165] Starting STT processing
+[2025-10-14 03:56:42.910] Running full pipeline
 
-[2025-09-19 20:47:07.201] STT processing failed:
+[2025-10-14 03:56:42.910] Starting STT processing
 
-STDOUT: 
-STDERR: usage: voice stt [-h] -m {tiny,base,small,medium,large}
-                 [-l {en,es,nl,ko,it,de,th,ru,pt,pl,id,zh,sv,cs,ja,fr,ro,tr,ca,hu,uk,el,bg,ar,sr,mk,lv,sl,hi,gl,da,ur,sk,he,fi,az,lt,et,nn,cy,pa,af,fa,eu,vi,bn,ne,mr,be,kk,hy,sw,ta,sq}]
-                 input_file
-voice stt: error: the following arguments are required: input_file
+[2025-10-14 03:56:49.382] STT processing completed
 
+[2025-10-14 03:56:49.383] Starting LLM processing
 
-[2025-09-19 20:47:51.602] Script started
+[2025-10-14 03:58:43.889] LLM processing completed
 
-[2025-09-19 20:47:51.602] Starting STT processing
+[2025-10-14 03:58:43.889] Starting TTS processing
 
-[2025-09-19 20:47:51.640] STT processing failed:
+[2025-10-14 04:01:46.189] TTS processing completed
 
-STDOUT: 
-STDERR: usage: voice stt [-h] -m {tiny,base,small,medium,large}
-                 [-l {en,es,nl,ko,it,de,th,ru,pt,pl,id,zh,sv,cs,ja,fr,ro,tr,ca,hu,uk,el,bg,ar,sr,mk,lv,sl,hi,gl,da,ur,sk,he,fi,az,lt,et,nn,cy,pa,af,fa,eu,vi,bn,ne,mr,be,kk,hy,sw,ta,sq}]
-                 input_file
-voice stt: error: the following arguments are required: input_file
+[2025-10-14 04:01:46.190] Script execution completed
+------------------------------------
 
 
