@@ -1,104 +1,154 @@
 #!/usr/bin/env python3
 
-"""
-IMPORTANT: this program requires that you install the selenium package,
-firefox, and the firefox drivers gecko to work
-"""
-
-#import requests 
-#import asyncio
-#from websockets.sync.client import connect
-import websockets
+import asyncio
+from websockets.sync.client import connect
 import ssl
+import pathlib
 
-from selenium import webdriver
-from selenium.webdriver.firefox.service import Service
-from selenium.webdriver.firefox.options import Options
-
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-import time
-import sys
-#import logging
-
-#logging.basicConfig(level=logging.INFO)
-
-
-#r = requests.get('', auth=('user', 'pass'))
-
+import logging
+logger = logging.getLogger('websockets')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler())
 
 
 class JitsiBot:
-    def __init__(self, room_url, id, password, audio_device, browser='firefox'):
+    def __init__(self, uri, id, password):
         """
         Initialize the Jitsi bot.
         
-        :param room_url: The full URL of the Jitsi meeting room
+        :param uri: The full URI of the Jitsi meeting room
         :param id: Bot ID for server to know whos joinning
         :param password: Password for bot ID 
-        :param browser: Browser to use ('chrome' or 'firefox')
         """
-        self.room_url = room_url
+        self.uri = uri
         self.id = id
         self.password = password
-        self.driver = None
-        self.browser = browser
-        self.audio_device = audio_device
-
 
     def start(self):
-        """Start the bot and connect to the Jitsi room."""
         try:
-            uri = "wss://jitsi.local/xmpp-websocket?room=stunningmemosadvanceyet"
-            headers = {
-                "Connection": "Upgrade",
-                "Upgrade": "websocket",
-                #"Sec-WebSocket-Key": "uYYFPQdk/6Kzh1burnyc4A==",
-                "Sec-WebSocket-Version": "13",
-                "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
-                "Sec-WebSocket-Protocol": "xmpp",
-                #"Sec-WebSocket-Accept": "lTIiZp270J52896fJsjuz0LIhTQ="
-                #
-                #"Sec-Fetch-Dest": "empty",
-                #"Sec-Fetch-Mode": "websocket",
-                #"Sec-Fetch-Site": "same-origin",
-                #"Pragma": "no-cache",
-                #"Cache-Control": "no-cache",
-            }
+            # set tls
+            #ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            #cert_path = pathlib.Path(__file__).with_name("jitsi-local.pem") # I HATE TLS
+            #ssl_context.load_verify_locations(cert_path)
 
-            #ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            # ignore tls
             ssl_context = ssl.create_default_context()
             ssl_context.check_hostname = False
             ssl_context.verify_mode = ssl.CERT_NONE
 
-            #with connect(uri, additional_headers=headers, ssl=ssl_context) as websocket:
-                #websocket.send(f"<open to=\"jitsi.local\" version=\"1.0\" xmlns=\"urn:ietf:params:xml:ns:xmpp-framing\"/>")
-            #    websocket.send('<open xmlns="urn:ietf:params:xml:ns:xmpp-framing" to="jitsi.local" version="1.0"/>')
-            #    message = websocket.recv()
-            #    print(f"Received: {message}")
+            with connect(self.uri, ssl=ssl_context, subprotocols=["xmpp"]) as websocket:
+                #text = '<open xmlns="urn:ietf:params:xml:ns:xmpp-framing" to="jitsi.local" version="1.0"/>'
+                #text = '<open to="jitsi.local" version="1.0" xmlns="urn:ietf:params:xml:ns:xmpp-framing"/>'
+                #text = '<message to="stunningmemosadvanceyet@conference.jitsi.local" type="groupchat" xmlns="jabber:client"><body>cock and balls</body></message>'
+                #websocket.send(text)
+                #print(f">>> {text}")
+                #message = websocket.recv()
+                #print(f"<<< {message}")
+                
+                #"""
+                #text = f'''
+                #<presence to="stunningmemosadvanceyet@conference.jitsi.local/da355bcc" xmlns="jabber:client">
+                #    <x xmlns="http://jabber.org/protocol/muc"/>
+                #        <stats-id>
+                #            Glenna-EJF
+                #        </stats-id>
+                #        <c hash="sha-1" node="https://jitsi.org/jitsi-meet" ver="+mpajJhafj8jFogLBKsPbQfMgzU=" xmlns="http://jabber.org/protocol/caps"/>
+                #        <SourceInfo>
+                #            {{}}
+                #        </SourceInfo>
+                #        <jitsi_participant_codecList>vp8,h264,av1,vp9</jitsi_participant_codecList>
+                #        <nick xmlns="http://jabber.org/protocol/nick">bot nick</nick>
+                #</presence>
+                #'''
+                #websocket.send(text)
+                #"""
 
-            websocket_conn = None
+                text = '<open to="jitsi.local" version="1.0" xmlns="urn:ietf:params:xml:ns:xmpp-framing"/>'
+                websocket.send(text)
 
-            try:
-                websocket_conn = websocket.create_connection(uri, header=headers, sslopt={"ssl_context": ssl_context})
-                websocket_conn.send('<open xmlns="urn:ietf:params:xml:ns:xmpp-framing" to="jitsi.local" version="1.0"/>')
-                message = websocket_conn.recv()
-                print(f"Received: {message}")
+                text = '<auth mechanism="ANONYMOUS" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>'
+                websocket.send(text)
 
-            except Exception as e:
-                print(f"Error: {e}")
+                #text = '<open to="jitsi.local" version="1.0" xmlns="urn:ietf:params:xml:ns:xmpp-framing"/>'
+                #websocket.send(text)
 
-            finally:
-                if websocket_conn:
-                    websocket_conn.close()
+                #text = '<iq id="_bind_auth_2" type="set" xmlns="jabber:client"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>'
+                #websocket.send(text)
 
+                #text = '<iq id="_session_auth_2" type="set" xmlns="jabber:client"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'
+                #websocket.send(text)
 
-            # Navigate to the room
-            #print(f"Connecting to {self.room_url}")
-            #self.driver.get(self.room_url)
+                #text = '<enable resume="true" xmlns="urn:xmpp:sm:3"/>'
+                #websocket.send(text)
+
+                """
+                text = f'''
+                <iq id="b176dbaa-5372-47f7-94cf-9ee236fc4904:sendIQ" to="jitsi.local" type="get" xmlns="jabber:client">
+                    <services xmlns="urn:xmpp:extdisco:2"/>
+                </iq>
+                '''
+                websocket.send(text)
+                """
+
+                """
+                text = f'''
+                <iq from="klap8yf2934r64shxmdeh5pu@jitsi.local/7-N5H2ierM8H" id="bde206d2-c8c6-4e11-b66e-06415464a80e:sendIQ" to="jitsi.local" type="get" xmlns="jabber:client">
+                    <query xmlns="http://jabber.org/protocol/disco#info"/>
+                </iq>
+                '''
+                websocket.send(text)
+                """
+
+                """
+                text = f'''
+                <iq id="cdaaf3ab-332e-45f1-9071-84f4bfbf1378:sendIQ" to="focus.jitsi.local" type="set" xmlns="jabber:client">
+                    <conference machine-uid="0717265bb0024cab91f0ba929d9b9975" room="stunningmemosadvanceyet@conference.jitsi.local" xmlns="http://jitsi.org/protocol/focus">
+                        <property name="rtcstatsEnabled" value="false"/>
+                        <property name="visitors-version" value="1"/>
+                    </conference>
+                </iq>
+                '''
+                websocket.send(text)
+                """
+
+                """
+                text = f'''
+                <iq from="klap8yf2934r64shxmdeh5pu@jitsi.local/7-N5H2ierM8H" id="c6a785c2-51c1-4965-b7e7-9e8e1ce4844e:sendIQ" to="breakout.jitsi.local" type="get" xmlns="jabber:client">
+                    <query node="breakout_rooms" xmlns="http://jabber.org/protocol/disco#info"/>
+                </iq>
+                '''
+                websocket.send(text)
+                """
+
+                """
+                text = f'''
+                <iq from="klap8yf2934r64shxmdeh5pu@jitsi.local/7-N5H2ierM8H" id="6d0626c0-5ee2-4e55-8757-ef15721f1a76:sendIQ" to="lobby.jitsi.local" type="get" xmlns="jabber:client">
+                    <query node="lobbyrooms" xmlns="http://jabber.org/protocol/disco#info"/>
+                </iq>
+                '''
+                websocket.send(text)
+                """
+
+                #text = '<r xmlns="urn:xmpp:sm:3"/>'
+                #websocket.send(text)
+
+                """
+                text = '''
+                <presence to="stunningmemosadvanceyet@conference.jitsi.local/7e175593" xmlns="jabber:client">
+                    <x xmlns="http://jabber.org/protocol/muc"/>
+                    <stats-id>Glenna-EJF</stats-id>
+                    <c hash="sha-1" node="https://jitsi.org/jitsi-meet" ver="+mpajJhafj8jFogLBKsPbQfMgzU=" xmlns="http://jabber.org/protocol/caps"/>
+                    <SourceInfo>{{}}</SourceInfo><jitsi_participant_codecList>vp8,h264,av1,vp9</jitsi_participant_codecList>
+                    <nick xmlns="http://jabber.org/protocol/nick">balls</nick>
+                </presence>
+                '''
+                websocket.send(text)
+                """
+                
+                
+                #message = websocket.recv()
+                #print(f"<<< {message}")
             
-            #time.sleep(3) # Wait for page to load and join the meeting
-
             # Enter display name
             #self.driver.find_element(By.ID, "premeeting-name-input").send_keys(self.id)
             #print(f"Entered name: {self.id}")
@@ -111,14 +161,13 @@ class JitsiBot:
             # Click Join
             #self.driver.find_element(By.XPATH, "//div[@data-testid='prejoin.joinMeeting']").click()
             #print("Joinned room via button")
-
-            #time.sleep(3)  # Wait for the room to load
             
         except Exception as e:
-            print(f"Error starting bot: {e}")
-            #self.stop()
+            print(f"Error: {e}")
+            #import traceback
+            #traceback.print_exc()
     
-
+"""
     # prob wont need to mute/unmute the bot
     def toggle_audio(self):
         try:
@@ -165,24 +214,25 @@ class JitsiBot:
     
 
     def stop(self):
-        """Stop the bot and close the browser."""
         if self.driver:
             self.driver.quit()
             print("Bot stopped")
-
+"""
 
 if __name__ == "__main__":
     # Bot config
-    XMPP_DOMAIN = "jitsi.local"
-    #ROOM_URL = f"https://{XMPP_DOMAIN}/testroom"
-    ROOM_URL = f"https://{XMPP_DOMAIN}/StunningMemosAdvanceYet"
-    #ID = f"bot@{XMPP_DOMAIN}"
+    XMPP_DOMAIN = "meet.jitsi.local"
+    #ROOM = "testroom"
+    #ROOM = "StunningMemosAdvanceYet"
+    ROOM = "testroom"
+
+    WS_URI = f"wss://{XMPP_DOMAIN}/xmpp-websocket?room={ROOM}"
     ID = f"bot"
     PASSWORD = "botpassword"
-    VITRUAL_AUDIO_DEVICE = "BotSink"
+    #VITRUAL_AUDIO_DEVICE = "BotSink"
     
     # Create bot instance
-    bot = JitsiBot(ROOM_URL, ID, PASSWORD, VITRUAL_AUDIO_DEVICE, browser='firefox')
+    bot = JitsiBot(WS_URI, ID, PASSWORD)
     
     try:
         bot.start()
@@ -190,7 +240,7 @@ if __name__ == "__main__":
         #time.sleep(1000000)
         
     except KeyboardInterrupt:
-        bot.stop()
+        #bot.stop()
         print("Interrupted by user")
-    finally:
-        bot.stop()
+    #finally:
+    #    bot.stop()

@@ -1,7 +1,10 @@
 jitsi-stuff/jitsi-bot/
 jitsi-stuff/dbd_debate.mp4
 jitsi-bot/env/
-llm/python-env/
-llm/dbd_debate.mp4
+llm/Cargo.lock
+llm/target
+llm/pipeline
+llm/env/
 llm/__pycache__/
-stt/
+llm/things
+llm/system.log
