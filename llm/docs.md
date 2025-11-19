@@ -11,7 +11,9 @@ ollama list
 # install model or run script to install one from hugging face
 ## either this:
 ```bash
-ollama pull deepseek-r1:1.5b
+ollama pull [model_name]
+# example:
+# ollama pull deepseek-r1:1.5b
 ```
 ## or this:
 ```bash
@@ -19,6 +21,7 @@ ollama pull deepseek-r1:1.5b
 ```
 # check its from huggingface and contains a gguf file extention
 # example page: https://huggingface.co/TheBloke/CapybaraHermes-2.5-Mistral-7B-GGUF
+# unsloth has a large collection of these file to choose from: https://huggingface.co/collections/unsloth/unsloth-dynamic-20-quants
 
 # exmaple command:
 # ./create-ollama-model https://huggingface.co/TheBloke/CapybaraHermes-2.5-Mistral-7B-GGUF/resolve/main/capybarahermes-2.5-mistral-7b.Q4_0.gguf?download=true

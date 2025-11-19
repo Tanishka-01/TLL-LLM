@@ -63,20 +63,29 @@ class JitsiBot:
                 #websocket.send(text)
                 #"""
 
-                text = '<open to="jitsi.local" version="1.0" xmlns="urn:ietf:params:xml:ns:xmpp-framing"/>'
-                websocket.send(text)
+                # XMPP flow: open → auth → bind → session
 
-                text = '<auth mechanism="ANONYMOUS" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>'
-                websocket.send(text)
+                # send opening xmpp stream
+                message = '<open to="jitsi.local" version="1.0" xmlns="urn:ietf:params:xml:ns:xmpp-framing"/>'
+                websocket.send(message)
+
+                # auth anonymously
+                message = '<auth mechanism="ANONYMOUS" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>'
+                websocket.send(message)
 
                 #text = '<open to="jitsi.local" version="1.0" xmlns="urn:ietf:params:xml:ns:xmpp-framing"/>'
                 #websocket.send(text)
 
-                #text = '<iq id="_bind_auth_2" type="set" xmlns="jabber:client"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>'
-                #websocket.send(text)
+                # bind to the server
+                text = '<iq id="_bind_auth_2" type="set" xmlns="jabber:client"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>'
+                websocket.send(text)
 
-                #text = '<iq id="_session_auth_2" type="set" xmlns="jabber:client"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'
-                #websocket.send(text)
+                # start session
+                text = '<iq id="_session_auth_2" type="set" xmlns="jabber:client"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'
+                websocket.send(text)
+
+                message = websocket.recv()
+                print(f"<<< {message}")
 
                 #text = '<enable resume="true" xmlns="urn:xmpp:sm:3"/>'
                 #websocket.send(text)

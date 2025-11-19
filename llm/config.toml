@@ -1,0 +1,9 @@
+python_env = "./env/bin/python3"
+audio_file = "./things/space.wav"
+llm_model = "capybarahermes-2.5-mistral-7b.Q4_0:latest"
+tts_model = "af_heart"
+output = "./things/llm-output.wav"
+stt_model = "tiny"
+stt_lang = "en"
+log_file = "system.log"
+enable_logging = true

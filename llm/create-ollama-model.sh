@@ -52,4 +52,4 @@ echo -e "\nModel $model_name has been added to ollama."
 # example page: https://huggingface.co/TheBloke/CapybaraHermes-2.5-Mistral-7B-GGUF
 
 # exmaple command:
-# ./create-ollama-model https://huggingface.co/TheBloke/CapybaraHermes-2.5-Mistral-7B-GGUF/resolve/main/capybarahermes-2.5-mistral-7b.Q4_0.gguf?download=true
+# ./create-ollama-model.sh https://huggingface.co/TheBloke/CapybaraHermes-2.5-Mistral-7B-GGUF/resolve/main/capybarahermes-2.5-mistral-7b.Q4_0.gguf?download=true

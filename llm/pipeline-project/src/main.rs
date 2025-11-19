@@ -1,13 +1,15 @@
 use std::{fs, process::{Command, Stdio}, io::Write};
-use clap::{Parser, Subcommand};
+use serde::Deserialize;
 use std::sync::{Arc, OnceLock};
+use clap::{Parser, Subcommand};
 
 // Global static Arc to config
 // This is needed for async processes to read config contents globally 
 static CONFIG: OnceLock<Arc<Config>> = OnceLock::new();
 
 // Change path to be in different locations other than just hard coded
-const CONFIG_PATH: &str = "./config.sh";
+//const CONFIG_PATH: &str = "./config.sh";
+const CONFIG_PATH: &str = "config.toml";
 
 
 #[derive(Parser)]
@@ -44,6 +46,7 @@ enum Commands {
     },
 }
 
+#[derive(Deserialize, Debug)]
 pub struct Config {
     pub python_env: String,
     pub log_file: String,
@@ -55,59 +58,30 @@ pub struct Config {
     pub output: String,
     pub audio_file: String,
 }
+
 impl Config {
-    fn load(path: Option<String>) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn load(path: Option<String>) -> Result<Self, Box<dyn std::error::Error>> {
         let config_content = match path {
             Some(p) => fs::read_to_string(p)?,
             None => fs::read_to_string(CONFIG_PATH)?,
         };
 
-        let mut stt_model = String::new();
-        let mut stt_lang = String::new();
-        let mut llm_model = String::new();
-        let mut tts_model = String::new();
-        let mut output = String::new();
-        let mut python_env = String::new();
-        let mut log_file = "pipeline.log".to_string();
-        let mut enable_logging = true;
-        let mut audio_file = String::new();
-
-        // this is bad code however I'm not certain theres a better way without importing a parser of some type
-        for line in config_content.lines() {
-            if line.starts_with("STT_MODEL=") {
-                stt_model = line[10..].trim_matches('"').to_string();
-            } else if line.starts_with("STT_LANG=") {
-                stt_lang = line[9..].trim_matches('"').to_string();
-            } else if line.starts_with("LLM_MODEL=") {
-                llm_model = line[10..].trim_matches('"').to_string();
-            } else if line.starts_with("TTS_MODEL=") {
-                tts_model = line[10..].trim_matches('"').to_string();
-            } else if line.starts_with("OUTPUT=") {
-                output = line[7..].trim_matches('"').to_string();
-            } else if line.starts_with("PYTHON_ENV=") {
-                python_env = line[11..].trim_matches('"').to_string();
-            } else if line.starts_with("LOG_FILE=") {
-                log_file = line[9..].trim_matches('"').to_string();
-            } else if line.starts_with("ENABLE_LOGGING=") {
-                enable_logging = line[15..].trim_matches('"').parse().expect("Some bool if logging");
-            } else if line.starts_with("AUDIO_FILE=") {
-                audio_file = line[11..].trim_matches('"').to_string();
-            }
-        }
-
-        Ok(Config {
-            stt_model,
-            stt_lang,
-            llm_model,
-            tts_model,
-            output,
-            python_env,
-            log_file,
-            enable_logging,
-            audio_file,
-        })
+        let config: Config = toml::from_str(&config_content)?;
+        Ok(config)
     }
 }
+// TODO not sure I'm going to use this
+/*
+COLORS = {
+    'DEBUG': '\033[36m',    # Cyan
+    'INFO': '\033[32m',     # Green
+    'WARNING': '\033[33m',  # Yellow
+    'ERROR': '\033[31m',    # Red
+    'CRITICAL': '\033[35m', # Magenta
+    'RESET': '\033[0m'      # Reset
+}
+*/
+
 // Helper to get the global config (safe for both sync and async)
 fn get_config() -> &'static Arc<Config> {
     CONFIG.get().expect("Config not initialized")
@@ -136,20 +110,19 @@ fn run_stt(input: Option<&str>) -> Result<String, Box<dyn std::error::Error>> {
     
     log("Starting STT processing");
     let config = get_config();
+    println!("{:#?}", config);
 
     let mut cmd = Command::new(&config.python_env);
     cmd.args(["voice", "stt", "-m", &config.stt_model, "-l", &config.stt_lang]);
 
-    if let Some(input_path) = input {
-        let path = Path::new(input_path);
+    let input_path = input.unwrap_or(&config.audio_file);
+    let path = Path::new(input_path);
 
-        // Validate that the path exists (or is a device)
-        if !path.exists() && !path.starts_with("/dev/") {
-            return Err(format!("Input path does not exist: {}", input_path).into());
-        }
-
-        cmd.arg(input_path);
-    } //else if let None(input_path) = in //TODO
+    // Validate that the path exists (or is a device)
+    //if !path.exists() && !path.starts_with("/dev/") {
+    //    return Err(format!("Input path does not exist: {}", input_path).into());
+    //}
+    cmd.arg(input_path);
 
     let output = cmd.output()
         .expect("Failed to run Python script, make sure your in the correct working directory!!!");
@@ -157,7 +130,8 @@ fn run_stt(input: Option<&str>) -> Result<String, Box<dyn std::error::Error>> {
     if !output.status.success() {
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
-        log(&format!("STT processing failed:\n\nSTDOUT: {}\nSTDERR: {}", stdout, stderr));
+        //log(&format!("STT processing failed:\n\nSTDOUT: {}\nSTDERR: {}", stdout, stderr));
+        log(&format!("\x1b[31mSTT processing failed:\x1b[0m\n\nSTDOUT: \x1b[0m{}\nSTDERR: {}", stdout, stderr));
         return Err("STT processing failed".into());
     }
     
@@ -183,7 +157,6 @@ fn run_llm(input: &str) -> Result<String, Box<dyn std::error::Error>> {
     }
     
     let output = child.wait_with_output()?;
-
     
     if !output.status.success()/*.wait()?.success()*/ {
         let stdout = String::from_utf8_lossy(&output.stdout);
@@ -191,7 +164,7 @@ fn run_llm(input: &str) -> Result<String, Box<dyn std::error::Error>> {
         log(&format!("LLM processing failed:\n\nSTDOUT: {}\nSTDERR: {}", stdout, stderr));
         return Err("LLM processing failed".into());
     }
-    
+
     log("LLM processing completed");
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     Ok(stdout)
@@ -220,7 +193,6 @@ fn run_tts(input: &str) -> Result<String, Box<dyn std::error::Error>> {
 }
 
 
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // This is here so every crash is seprated by a log at the end in the log file
     let original_hook = std::panic::take_hook();
@@ -239,10 +211,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         config.enable_logging = false;
     }
     CONFIG.set(Arc::new(config)).map_err(|_| "Config already initialized")?;
-    
+
     log("Script started");
     if let Some(command) = &args.command {
-        let _balls = match command {
+        let pipeline_output = match command {
             Commands::Stt { input } => {
                 let output = run_stt(input.as_deref())?;
                 output
@@ -267,6 +239,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             */
         };
+        println!("{pipeline_output}");
     } else {
         // Default full pipeline
         log("Running full pipeline");

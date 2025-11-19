@@ -13,5 +13,5 @@ sudo crontab -e
 ```
 # add this to end of file
 ```
-@reboot /home/micah/Desktop/command
+@reboot /home/[user]/Desktop/command
 ```
