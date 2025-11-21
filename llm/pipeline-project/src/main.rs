@@ -70,17 +70,6 @@ impl Config {
         Ok(config)
     }
 }
-// TODO not sure I'm going to use this
-/*
-COLORS = {
-    'DEBUG': '\033[36m',    # Cyan
-    'INFO': '\033[32m',     # Green
-    'WARNING': '\033[33m',  # Yellow
-    'ERROR': '\033[31m',    # Red
-    'CRITICAL': '\033[35m', # Magenta
-    'RESET': '\033[0m'      # Reset
-}
-*/
 
 // Helper to get the global config (safe for both sync and async)
 fn get_config() -> &'static Arc<Config> {
@@ -92,7 +81,7 @@ fn log(message: &str) {
     let config = get_config();
     if config.enable_logging {
         let timestamp = chrono::Local::now().format("%Y-%m-%d %H:%M:%S.%3f").to_string();
-        let log_entry = format!("[{}] {}\n", timestamp, message);
+        let log_entry = format!("\x1b[35m[{}]\x1b[0m {}\n", timestamp, message);
         
         // Create or Append to log file
         let mut file = std::fs::OpenOptions::new()
@@ -125,17 +114,16 @@ fn run_stt(input: Option<&str>) -> Result<String, Box<dyn std::error::Error>> {
     cmd.arg(input_path);
 
     let output = cmd.output()
-        .expect("Failed to run Python script, make sure your in the correct working directory!!!");
+        .expect("\x1b[31mFailed to run Python script, make sure your in the correct working directory!!!\x1b[0m");
     
     if !output.status.success() {
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
-        //log(&format!("STT processing failed:\n\nSTDOUT: {}\nSTDERR: {}", stdout, stderr));
-        log(&format!("\x1b[31mSTT processing failed:\x1b[0m\n\nSTDOUT: \x1b[0m{}\nSTDERR: {}", stdout, stderr));
+        log(&format!("\x1b[31mSTT processing failed:\x1b[0m\n\nSTDOUT: {}\n\x1b[31mSTDERR: {}\x1b[0m", stdout, stderr));
         return Err("STT processing failed".into());
     }
-    
-    log("STT processing completed");
+
+    log("\x1b[32mSTT processing completed\x1b[0m");
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     Ok(stdout)
 }
@@ -161,11 +149,11 @@ fn run_llm(input: &str) -> Result<String, Box<dyn std::error::Error>> {
     if !output.status.success()/*.wait()?.success()*/ {
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
-        log(&format!("LLM processing failed:\n\nSTDOUT: {}\nSTDERR: {}", stdout, stderr));
+        log(&format!("\x1b[31mLLM processing failed:\x1b[0m\n\nSTDOUT: {}\n\x1b[31mSTDERR: {}\x1b[0m", stdout, stderr));
         return Err("LLM processing failed".into());
     }
 
-    log("LLM processing completed");
+    log(&format!("\x1b[32mLLM processing completed\x1b[0m"));
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     Ok(stdout)
 }
@@ -174,20 +162,20 @@ fn run_llm(input: &str) -> Result<String, Box<dyn std::error::Error>> {
 fn run_tts(input: &str) -> Result<String, Box<dyn std::error::Error>> {
     log("Starting TTS processing");
     let config = get_config();
-    
+
     // this runs the subprocess 'voice' using the correct env
     let output = Command::new(&config.python_env)
         .args(["voice", "tts", input, "-v", &config.tts_model, "-o", &config.output])
         .output()?;
-    
+
     if !output.status.success() {
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
-        log(&format!("TTS processing failed:\n\nSTDOUT: {}\nSTDERR: {}", stdout, stderr));
+        log(&format!("\x1b[31mTTS processing failed:\x1b[0m\n\nSTDOUT: {}\n\x1b[31mSTDERR: {}\x1b[0m", stdout, stderr));
         return Err("TTS processing failed".into());
     }
-    
-    log("TTS processing completed");
+
+    log("\x1b[32mTTS processing completed\x1b[0m");
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     Ok(stdout)
 }
@@ -198,7 +186,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let original_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |panic_info| {
         println!("THERE IS AN ERROR!!!!!");
-        log("Script panicked and crashed\n------------------------------------\n");
+        log(&format!("\x1b[31mScript panicked and crashed\x1b[0m\n------------------------------------\n"));
         original_hook(panic_info);
     }));
 
@@ -210,7 +198,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if args.no_log {
         config.enable_logging = false;
     }
-    CONFIG.set(Arc::new(config)).map_err(|_| "Config already initialized")?;
+    CONFIG.set(Arc::new(config)).map_err(|_| "\x1b[33mConfig already initialized\x1b[0m")?;
 
     log("Script started");
     if let Some(command) = &args.command {
@@ -254,6 +242,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         run_tts(&llm_output)?;
     }
     
-    log("Script execution completed\n------------------------------------\n");
+    log(&format!("\x1b[32mScript execution completed\x1b[0m\n------------------------------------\n"));
     Ok(())
 }
