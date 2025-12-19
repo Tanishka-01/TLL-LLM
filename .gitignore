@@ -1,6 +1,3 @@
-jitsi-stuff/jitsi-bot/
-jitsi-stuff/dbd_debate.mp4
-jitsi-bot/env/
 llm/Cargo.lock
 llm/target
 llm/pipeline
