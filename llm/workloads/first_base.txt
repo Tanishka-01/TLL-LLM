@@ -1,0 +1,1 @@
+Given the functions descrbed above, what functions (list the names) would provide outputs that help to answer the user query?

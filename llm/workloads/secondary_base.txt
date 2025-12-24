@@ -1,0 +1,1 @@
+Given the output of the functions above, answer the users original question.

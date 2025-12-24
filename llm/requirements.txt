@@ -4,3 +4,4 @@ sounddevice
 pyaudio
 numpy
 soundfile
+flask

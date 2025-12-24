@@ -105,7 +105,7 @@ fn run_stt(input: Option<&str>) -> Result<String, Box<dyn std::error::Error>> {
     cmd.args(["voice", "stt", "-m", &config.stt_model, "-l", &config.stt_lang]);
 
     let input_path = input.unwrap_or(&config.audio_file);
-    let path = Path::new(input_path);
+    //let path = Path::new(input_path);
 
     // Validate that the path exists (or is a device)
     //if !path.exists() && !path.starts_with("/dev/") {

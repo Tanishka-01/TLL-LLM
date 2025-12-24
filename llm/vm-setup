@@ -1,0 +1,17 @@
+# once ubuntu is installed and have made a sharded dir to host machine
+# create script and add these lines
+
+``` bash
+#!/bin/env bash
+
+sudo mount -t virtiofs virt-share /mnt/virt-share
+```
+
+# then edit cron jobs so this script runs on startup
+``` bash
+sudo crontab -e
+```
+# add this to end of file
+```
+@reboot /home/[user]/Desktop/command
+```

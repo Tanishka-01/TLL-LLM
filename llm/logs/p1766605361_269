@@ -1,0 +1,28 @@
+User Query: What is 2 + 4?
+
+# PREAMBLE
+# Each function that can be executed is listed below
+# The name and output are provided
+
+[function]
+name=multiply
+output=the product of x times y
+endpoint=https://localhost:8082/function1?X=x&Y=y
+cpuusage=20%
+memusage=20%
+
+[function]
+name=addition
+output=the sum of x and y
+endpoint=https://localhost:8082/function2
+cpuusage=66%
+memusage=40%
+
+[function]
+name=cpu_usage
+output=Proc stats on CPU usage
+endpoint=https://localhost:8082/function3
+cpuusage=80%
+memusage=20%
+
+Given the functions descrbed above, what functions (list the names) would provide outputs that help to answer the user query?

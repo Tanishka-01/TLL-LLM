@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+project_path=$(dirname "$(readlink -f $0)")
+cd $project_path
+
 # update and install tools
 sudo apt update && sudo apt upgrade -y
 sudo apt install python3 python3-pip python3.12-venv portaudio19-dev ffmpeg build-essential curl -y
