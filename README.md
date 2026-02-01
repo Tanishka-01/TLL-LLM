@@ -1,4 +1,4 @@
-# Privacy-Aware Voice Assistant Pipeline
+# Tightlipped LLM
 
 A local voice assistant that routes queries to the safest AI service based on who you are. A lawyer's client details stay on-device. A journalist's source information never leaves the machine. General knowledge questions go to the cloud for better answers.
 
