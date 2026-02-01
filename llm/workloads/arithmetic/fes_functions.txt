@@ -1,24 +1,13 @@
-# PREAMBLE
-# Each function that can be executed is listed below
-# The name and output are provided
+AVAILABLE FUNCTIONS:
 
-[function]
-name=multiply
-output=the product of x times y
-endpoint=https://localhost:8082/function1?X=x&Y=y
-cpuusage=20%
-memusage=20%
+add(a, b)
+  - Adds two numbers together
+  - Arguments: a (number), b (number)
+  - Returns: The sum of a and b
+  - Example: add(5, 3) returns 8
 
-[function]
-name=addition
-output=the sum of x and y
-endpoint=https://localhost:8082/function2
-cpuusage=66%
-memusage=40%
-
-[function]
-name=cpu_usage
-output=Proc stats on CPU usage
-endpoint=https://localhost:8082/function3
-cpuusage=80%
-memusage=20%
+subtract(a, b)
+  - Subtracts b from a
+  - Arguments: a (number), b (number)
+  - Returns: The difference (a - b)
+  - Example: subtract(10, 4) returns 6

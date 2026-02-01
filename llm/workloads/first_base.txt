@@ -1,1 +1,7 @@
-Given the functions descrbed above, what functions (list the names) would provide outputs that help to answer the user query?
+You have access to the following functions. To use a function, respond with EXACTLY this format:
+
+CALL: function_name(arg1, arg2)
+
+Only call functions that are listed. Do not make up functions.
+If you need multiple functions, put each CALL on a new line.
+After listing your function calls, stop. Do not provide the answer yet.

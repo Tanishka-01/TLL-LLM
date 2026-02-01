@@ -1,0 +1,49 @@
+AVAILABLE FUNCTIONS:
+
+get_cpu_usage()
+  - Returns current CPU usage percentage
+  - Arguments: none
+  - Returns: CPU usage as percentage
+  - Example: get_cpu_usage() returns "23.5%"
+
+get_memory_usage()
+  - Returns current memory (RAM) usage
+  - Arguments: none
+  - Returns: Memory used and total
+  - Example: get_memory_usage() returns "4.2GB / 16GB (26%)"
+
+get_disk_usage()
+  - Returns disk space usage
+  - Arguments: none
+  - Returns: Disk used and total
+  - Example: get_disk_usage() returns "120GB / 500GB (24%)"
+
+get_uptime()
+  - Returns how long the system has been running
+  - Arguments: none
+  - Returns: Uptime in days, hours, minutes
+  - Example: get_uptime() returns "2 days, 5 hours, 30 minutes"
+
+get_ip()
+  - Returns the IP address of the machine
+  - Arguments: none
+  - Returns: IP address
+  - Example: get_ip() returns "192.168.1.100"
+
+get_date()
+  - Returns current date and time
+  - Arguments: none
+  - Returns: Current datetime
+  - Example: get_date() returns "2025-01-07 14:30:00"
+
+read_file(path)
+  - Reads contents of a file
+  - Arguments: path (string)
+  - Returns: File contents
+  - Example: read_file("config.toml") returns file content
+
+list_files(directory)
+  - Lists files in a directory
+  - Arguments: directory (string)
+  - Returns: List of files
+  - Example: list_files(".") returns ["file1.txt", "file2.py"]

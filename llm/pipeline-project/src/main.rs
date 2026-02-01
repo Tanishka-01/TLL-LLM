@@ -44,6 +44,13 @@ enum Commands {
         #[clap(help = "Input text for TTS")]
         input: String,
     },
+    #[clap(about = "Run Tight-Lipped Layer routing decision")]
+    Tll {
+        #[clap(short = 'q', long = "query", help = "User query to route")]
+        query: String,
+        #[clap(short = 'p', long = "profile", help = "User profile (Lawyer, Journalist, Healthcare, Researcher)")]
+        profile: String,
+    },
 }
 
 #[derive(Deserialize, Debug)]
@@ -95,8 +102,6 @@ fn log(message: &str) {
 
 
 fn run_stt(input: Option<&str>) -> Result<String, Box<dyn std::error::Error>> {
-    use std::path::Path;
-    
     log("Starting STT processing");
     let config = get_config();
     println!("{:#?}", config);
@@ -130,9 +135,9 @@ fn run_stt(input: Option<&str>) -> Result<String, Box<dyn std::error::Error>> {
 
 
 fn run_llm(input: &str) -> Result<String, Box<dyn std::error::Error>> {
-    log("Starting LLM processing");
+    log("Starting LLM processing (direct)");
     let config = get_config();
-    
+
     let mut child = Command::new("ollama")
         .args(["run", &config.llm_model, input])
         .stdin(Stdio::piped())
@@ -143,9 +148,9 @@ fn run_llm(input: &str) -> Result<String, Box<dyn std::error::Error>> {
     if let Some(ref mut stdin) = child.stdin {
         stdin.write_all(input.as_bytes())?;
     }
-    
+
     let output = child.wait_with_output()?;
-    
+
     if !output.status.success()/*.wait()?.success()*/ {
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
@@ -154,6 +159,39 @@ fn run_llm(input: &str) -> Result<String, Box<dyn std::error::Error>> {
     }
 
     log(&format!("\x1b[32mLLM processing completed\x1b[0m"));
+    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+    Ok(stdout)
+}
+
+
+fn run_tll(query: &str, profile: &str) -> Result<String, Box<dyn std::error::Error>> {
+    log(&format!("Starting TLL routing (profile={}, query={})", profile, query));
+    let config = get_config();
+
+    let output = Command::new(&config.python_env)
+        .args([
+            "tll.py",
+            "--profile", profile,
+            "--query", query,
+            "--model", &config.llm_model,
+        ])
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .output()?;
+
+    if !output.status.success() {
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        log(&format!("\x1b[31mTLL routing failed:\x1b[0m\n\nSTDOUT: {}\n\x1b[31mSTDERR: {}\x1b[0m", stdout, stderr));
+        return Err(format!("TLL routing failed: {}", stderr.trim()).into());
+    }
+
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    if !stderr.is_empty() {
+        log(&format!("\x1b[36mTLL info:\x1b[0m {}", stderr.trim()));
+    }
+
+    log("\x1b[32mTLL routing completed\x1b[0m");
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     Ok(stdout)
 }
@@ -215,17 +253,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let output = run_tts(input)?;
                 output
             },
-            /*
-            _ => {
-                // Default full pipeline
-                log("Running full pipeline");
-                let input = Some("hey whats going on");
-
-                let stt_output = run_stt(input)?;
-                let llm_output = run_llm(&stt_output)?;
-                run_tts(&llm_output)?        
-            }
-            */
+            Commands::Tll { query, profile } => {
+                let output = run_tll(query, profile)?;
+                output
+            },
         };
         println!("{pipeline_output}");
     } else {

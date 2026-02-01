@@ -1,0 +1,31 @@
+AVAILABLE FUNCTIONS:
+
+word_count(text)
+  - Counts the number of words in text
+  - Arguments: text (string)
+  - Returns: Number of words
+  - Example: word_count("hello world") returns 2
+
+char_count(text)
+  - Counts the number of characters in text
+  - Arguments: text (string)
+  - Returns: Number of characters
+  - Example: char_count("hello") returns 5
+
+frequency(text)
+  - Returns word frequency distribution
+  - Arguments: text (string)
+  - Returns: Dictionary of word counts
+  - Example: frequency("hello hello world") returns {"hello": 2, "world": 1}
+
+find_word(text, word)
+  - Counts occurrences of a specific word
+  - Arguments: text (string), word (string)
+  - Returns: Number of occurrences
+  - Example: find_word("hello hello world", "hello") returns 2
+
+line_count(filepath)
+  - Counts lines in a file
+  - Arguments: filepath (string)
+  - Returns: Number of lines
+  - Example: line_count("config.toml") returns 10
